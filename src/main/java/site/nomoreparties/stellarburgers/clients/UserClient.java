@@ -9,7 +9,7 @@ public class UserClient extends RestAssuredClient {
     private final String CREATE_USER_URL = AUTH + "/register";
     private final String LOGIN_USER_URL = AUTH + "/login";
     private final String LOGOUT_USER_URL = AUTH + "/logout";
-    //private final String DELETE_USER_URL = COURIER + "/{courierId}";
+    private final String DELETE_USER_URL = AUTH + "/user";
 
 
     public Response createUser(User user) {
@@ -26,9 +26,9 @@ public class UserClient extends RestAssuredClient {
                 .post(LOGIN_USER_URL);
     }
 
-    /*public Response deleteUser(User user){
+    public Response deleteUser(){
         return reqSpec
                 .when()
                 .delete(DELETE_USER_URL);
-    }*/
+    }
 }

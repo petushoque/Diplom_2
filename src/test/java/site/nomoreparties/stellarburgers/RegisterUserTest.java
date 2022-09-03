@@ -2,7 +2,6 @@ package site.nomoreparties.stellarburgers;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.response.Response;
 import lombok.Data;
 import org.junit.After;
 import org.junit.Assert;
@@ -24,19 +23,13 @@ public class RegisterUserTest {
         userClient = new UserClient();
     }
 
-    /*@After
+    @After
     public void deleteCourier(){
-        if((courier.getLogin() != null)&(courier.getPassword() != null)) {
-            CourierCredentials creds = CourierCredentials.from(courier);
-            courierId = courierClient.loginCourier(creds)
-                    .then()
-                    .log()
-                    .all()
-                    .extract()
-                    .path("id");
-            courierClient.deleteCourier(courierId);
+        if((user.getName() != "")&(user.getPassword() != "")&(user.getEmail() != "")) {
+            userClient.deleteUser();
+            System.out.println("The created user was deleted after the test");
         }
-    }*/
+    }
 
     @Test
     @DisplayName("Check status code and body of /auth/register: Correct data")
