@@ -23,6 +23,8 @@ public class RegisterUserTest {
 
     @Before
     public void setUp() {
+        user = new User();
+        user.setRandom();
         userClient = new UserClient();
     }
 
@@ -44,17 +46,18 @@ public class RegisterUserTest {
     @DisplayName("Check status code and body of /courier: Correct data")
     @Description("A test for a positive scenario, a successful server response is 200, " +
             "the response body contains success: true, accessToken and refreshToken")
-    public void createNewCourierTest(){
-        user = new User();
-        user.setRandom();
+    public void createNewUserTest(){
         boolean isCreated = userClient.createUser(user)
                 .then()
                 .log()
                 .all()
-                .statusCode(SC_CREATED)
+                .statusCode(SC_OK)
+                .body("refreshToken", notNullValue())
+                .body("accessToken", notNullValue())
                 .extract()
-                .path("ok");
+                .path("success");
         Assert.assertTrue(isCreated);
+        System.out.println("The new user has been successfully registered");
     }
 
     /*
