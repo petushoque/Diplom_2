@@ -89,6 +89,7 @@ public class RegisterUserTest {
                 .extract()
                 .path("success");
         Assert.assertFalse(isCreated);
+        System.out.println("The system did not allow to create a user with empty email");
     }
 
     @Test
@@ -108,6 +109,7 @@ public class RegisterUserTest {
                 .extract()
                 .path("success");
         Assert.assertFalse(isCreated);
+        System.out.println("The system did not allow to create a user with empty name");
     }
 
     @Test
@@ -127,5 +129,6 @@ public class RegisterUserTest {
                 .extract()
                 .path("success");
         Assert.assertFalse(isCreated);
+        System.out.println("The system did not allow to create a user with empty password");
     }
 }

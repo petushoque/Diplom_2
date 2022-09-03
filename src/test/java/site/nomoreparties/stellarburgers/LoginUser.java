@@ -11,6 +11,7 @@ import site.nomoreparties.stellarburgers.clients.UserClient;
 import site.nomoreparties.stellarburgers.models.User;
 import static org.hamcrest.CoreMatchers.*;
 import static org.apache.http.HttpStatus.*;
+
 @Data
 public class LoginUser {
 
@@ -46,5 +47,81 @@ public class LoginUser {
                 .path("success");
         Assert.assertTrue(isLoggedIn);
         System.out.println("The user is successfully logged in to the system");
+    }
+
+    @Test
+    @DisplayName("Check status code and error message of /courier/login: Invalid email")
+    @Description("A test for a negative scenario, for a request with an incorrect email, the system responds with a 401 code and an error message")
+    public void loginUserWithInvalidEmailTest(){
+        user.setEmail("qwerty");
+        boolean isLoggedIn = userClient.loginUser(user)
+                .then()
+                .log()
+                .all()
+                .assertThat()
+                .statusCode(SC_UNAUTHORIZED)
+                .assertThat()
+                .body("message", equalTo("email or password are incorrect"))
+                .extract()
+                .path("success");
+        Assert.assertFalse(isLoggedIn);
+        System.out.println("The system does not allow you to log in with an incorrect email");
+    }
+
+    @Test
+    @DisplayName("Check status code and error message of /courier/login: Invalid password")
+    @Description("A test for a negative scenario, for a request with an incorrect password, the system responds with a 401 code and an error message")
+    public void loginUserWithInvalidPasswordTest(){
+        user.setPassword("qwerty");
+        boolean isLoggedIn = userClient.loginUser(user)
+                .then()
+                .log()
+                .all()
+                .assertThat()
+                .statusCode(SC_UNAUTHORIZED)
+                .assertThat()
+                .body("message", equalTo("email or password are incorrect"))
+                .extract()
+                .path("success");
+        Assert.assertFalse(isLoggedIn);
+        System.out.println("The system does not allow you to log in with an incorrect email");
+    }
+
+    @Test
+    @DisplayName("Check status code and error message of /courier/login: Empty email")
+    @Description("A test for a negative scenario, for a request with an empty email, the system responds with a 401 code and an error message")
+    public void loginUserWithEmptyEmailTest(){
+        user.setEmail("");
+        boolean isLoggedIn = userClient.loginUser(user)
+                .then()
+                .log()
+                .all()
+                .assertThat()
+                .statusCode(SC_UNAUTHORIZED)
+                .assertThat()
+                .body("message", equalTo("email or password are incorrect"))
+                .extract()
+                .path("success");
+        Assert.assertFalse(isLoggedIn);
+        System.out.println("The system does not allow you to log in with an empty email");
+    }
+
+    @Test
+    @DisplayName("Check status code and error message of /courier/login: Empty password")
+    @Description("A test for a negative scenario, for a request with an empty password, the system responds with a 401 code and an error message")
+    public void loginUserWithEmptyPasswordTest(){
+        user.setPassword("");
+        boolean isLoggedIn = userClient.loginUser(user)
+                .then()
+                .log()
+                .all()
+                .assertThat()
+                .statusCode(SC_UNAUTHORIZED)
+                .assertThat()
+                .body("message", equalTo("email or password are incorrect"))
+                .extract()
+                .path("success");
+        Assert.assertFalse(isLoggedIn);
+        System.out.println("The system does not allow you to log in with an empty password");
     }
 }
