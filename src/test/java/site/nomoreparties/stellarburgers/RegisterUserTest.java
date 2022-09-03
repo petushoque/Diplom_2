@@ -10,8 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 import site.nomoreparties.stellarburgers.clients.UserClient;
 import site.nomoreparties.stellarburgers.models.User;
-
-import java.util.UUID;
 import static org.hamcrest.CoreMatchers.*;
 import static org.apache.http.HttpStatus.*;
 
@@ -23,8 +21,6 @@ public class RegisterUserTest {
 
     @Before
     public void setUp() {
-        user = new User();
-        user.setRandom();
         userClient = new UserClient();
     }
 
@@ -43,10 +39,12 @@ public class RegisterUserTest {
     }*/
 
     @Test
-    @DisplayName("Check status code and body of /courier: Correct data")
+    @DisplayName("Check status code and body of /auth/register: Correct data")
     @Description("A test for a positive scenario, a successful server response is 200, " +
             "the response body contains success: true, accessToken and refreshToken")
-    public void createNewUserTest(){
+    public void createNewUserTest() {
+        user = new User();
+        user.setRandom();
         boolean isCreated = userClient.createUser(user)
                 .then()
                 .log()
@@ -60,70 +58,81 @@ public class RegisterUserTest {
         System.out.println("The new user has been successfully registered");
     }
 
-    /*
     @Test
-    @DisplayName("Check status code and error message of /courier: Creating an existing courier")
-    @Description("A test for a negative scenario, for a request with existing data, the system responds with a 409 code and an error message")
-    public void courierAlreadyExistsTest(){
-        Courier existedCourier = Courier.getRandom();
-        courierClient.createCourier(existedCourier);
-        courier = existedCourier;
-        Response response = courierClient.createCourier(courier);
-        response.then()
+    @DisplayName("Check status code and error message of /auth/register: Creating an existing user")
+    @Description("A test for a negative scenario, for a request with existing data, the system responds with a 403 code and an error message")
+    public void userAlreadyExistsTest(){
+        User existedUser = new User();
+        existedUser.setRandom();
+        userClient.createUser(existedUser);
+        user = existedUser;
+        boolean isCreated = userClient.createUser(user)
+                .then()
                 .log()
                 .all()
-                .statusCode(SC_CONFLICT)
+                .statusCode(SC_FORBIDDEN)
                 .assertThat()
-                .body("message", notNullValue())
-                .assertThat()
-                .body("message", equalTo("Этот логин уже используется. Попробуйте другой."));
+                .body("message", equalTo("User already exists"))
+                .extract()
+                .path("success");
+        Assert.assertFalse(isCreated);
+        System.out.println("The system did not allow to create a user with already existing credentials");
     }
 
     @Test
-    @DisplayName("Check status code and error message of /courier: Empty login")
-    @Description("A test for a negative scenario, for a request with empty login, the system responds with a 400 code and an error message")
-    public void createNewCourierWithoutLoginTest(){
-        courier = new Courier(null, "password1", "helloworld");
-        Response response = courierClient.createCourier(courier);
-        response.then()
+    @DisplayName("Check status code and error message of /user/register: Empty email")
+    @Description("A test for a negative scenario, for a request with empty email, the system responds with a 403 code and an error message")
+    public void createNewUserWithoutEmailTest(){
+        user = new User();
+        user.setRandom();
+        user.setEmail("");
+        boolean isCreated = userClient.createUser(user)
+                .then()
                 .log()
                 .all()
-                .statusCode(SC_BAD_REQUEST)
+                .statusCode(SC_FORBIDDEN)
                 .assertThat()
-                .body("message", notNullValue())
-                .assertThat()
-                .body("message", equalTo("Недостаточно данных для создания учетной записи"));
+                .body("message", equalTo("Email, password and name are required fields"))
+                .extract()
+                .path("success");
+        Assert.assertFalse(isCreated);
     }
 
     @Test
-    @DisplayName("Check status code and error message of /courier: Empty password")
-    @Description("A test for a negative scenario, for a request with empty password, the system responds with a 400 code and an error message")
-    public void createNewCourierWithoutPasswordTest(){
-        courier = new Courier(UUID.randomUUID().toString(), null, "harrypotter");
-        Response response = courierClient.createCourier(courier);
-        response.then()
+    @DisplayName("Check status code and error message of /user/register: Empty name")
+    @Description("A test for a negative scenario, for a request with empty name, the system responds with a 403 code and an error message")
+    public void createNewUserWithoutNameTest(){
+        user = new User();
+        user.setRandom();
+        user.setName("");
+        boolean isCreated = userClient.createUser(user)
+                .then()
                 .log()
                 .all()
-                .statusCode(SC_BAD_REQUEST)
+                .statusCode(SC_FORBIDDEN)
                 .assertThat()
-                .body("message", notNullValue())
-                .assertThat()
-                .body("message", equalTo("Недостаточно данных для создания учетной записи"));
+                .body("message", equalTo("Email, password and name are required fields"))
+                .extract()
+                .path("success");
+        Assert.assertFalse(isCreated);
     }
 
     @Test
-    @DisplayName("Check status code and error message of /courier: Empty first name")
-    @Description("A test for a negative scenario, for a request with empty first name, the system responds with a 400 code and an error message")
-    public void createNewCourierWithoutFirstNameTest(){
-        courier = new Courier(UUID.randomUUID().toString(), "qwerty", null);
-        Response response = courierClient.createCourier(courier);
-        response.then()
+    @DisplayName("Check status code and error message of /user/register: Empty password")
+    @Description("A test for a negative scenario, for a request with empty password, the system responds with a 403 code and an error message")
+    public void createNewUserWithoutPasswordTest(){
+        user = new User();
+        user.setRandom();
+        user.setPassword("");
+        boolean isCreated = userClient.createUser(user)
+                .then()
                 .log()
                 .all()
-                .statusCode(SC_BAD_REQUEST)
+                .statusCode(SC_FORBIDDEN)
                 .assertThat()
-                .body("message", notNullValue())
-                .assertThat()
-                .body("message", equalTo("Недостаточно данных для создания учетной записи"));
-    }*/
+                .body("message", equalTo("Email, password and name are required fields"))
+                .extract()
+                .path("success");
+        Assert.assertFalse(isCreated);
+    }
 }
