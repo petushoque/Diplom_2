@@ -34,15 +34,15 @@ public class EditUserTest {
     }
 
     @Test
-    @DisplayName("Check status code and body of /user: The user is authorized")
+    @DisplayName("Check status code and body of /user: The user is authorized, name change")
     @Description("A test for a positive scenario, a successful server response is 200, the response body contains success: true")
     public void editUserWithAuthTest(){
+        User editedUser = user;
         String bearerToken = userClient.loginUser(user)
                 .then()
                 .extract()
                 .path("accessToken");
         bearerToken = bearerToken.split(" ")[1];
-        User editedUser = user;
         editedUser.setName("John");
         boolean isEdited = userClient.editUser(editedUser, bearerToken)
                 .then()
@@ -54,5 +54,25 @@ public class EditUserTest {
                 .path("success");
         Assert.assertTrue(isEdited);
         System.out.println("The user has been successfully edited");
+    }
+
+    @Test
+    @DisplayName("Check status code and body of /user: The user is unauthorized")
+    @Description("A test for a negative scenario, for a request without auth token, the system responds with a 401 code and an error message")
+    public void editUserWithoutAuthTest(){
+        User editedUser = user;
+        editedUser.setName("John");
+        boolean isEdited = userClient.editUser(editedUser, "")
+                .then()
+                .log()
+                .all()
+                .assertThat()
+                .statusCode(SC_UNAUTHORIZED)
+                .assertThat()
+                .body("message", equalTo("You should be authorised"))
+                .extract()
+                .path("success");
+        Assert.assertFalse(isEdited);
+        System.out.println("The system did not allow editing the user");
     }
 }

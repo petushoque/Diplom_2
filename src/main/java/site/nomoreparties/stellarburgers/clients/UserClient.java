@@ -27,12 +27,21 @@ public class UserClient extends RestAssuredClient {
     }
 
     public Response editUser(User user, String token) {
-        return reqSpec
-                .auth()
-                .oauth2(token)
-                .body(user)
-                .when()
-                .patch(USER_URL);
+        if (token.length() > 0) {
+            return reqSpec
+                    .auth()
+                    .oauth2(token)
+                    .body(user)
+                    .when()
+                    .patch(USER_URL);
+        }
+        else {
+            return reqSpec
+                    .body(user)
+                    .when()
+                    .patch(USER_URL);
+        }
+
     }
 
     public Response deleteUser(){
