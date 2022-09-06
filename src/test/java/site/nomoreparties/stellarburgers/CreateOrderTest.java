@@ -43,7 +43,7 @@ public class CreateOrderTest {
                 .path("accessToken");
         bearerToken = bearerToken.split(" ")[1];
         Order order = new Order();
-        order.setCorrectIngredients();
+        order.setCorrectIngredientsList();
         boolean isCreated = orderClient.createOrder(order, bearerToken)
                 .then()
                 .log()
@@ -61,7 +61,7 @@ public class CreateOrderTest {
     @Description("///")
     public void createOrderWithoutAuthAndCorrectIngredientsTest(){
         Order order = new Order();
-        order.setCorrectIngredients();
+        order.setCorrectIngredientsList();
         boolean isCreated = orderClient.createOrder(order, "")
                 .then()
                 .log()
@@ -80,6 +80,24 @@ public class CreateOrderTest {
     public void createOrderWithoutAuthAndEmptyIngredientsListTest(){
         Order order = new Order();
         order.setEmptyIngredientsList();
+        boolean isCreated = orderClient.createOrder(order, "")
+                .then()
+                .log()
+                .all()
+                .assertThat()
+                .statusCode(SC_OK)
+                .extract()
+                .path("success");
+        Assert.assertTrue(isCreated);
+        System.out.println("///");
+    }
+
+    @Test
+    @DisplayName("///")
+    @Description("///")
+    public void createOrderWithoutAuthAndIncorrectIngredientsListTest(){
+        Order order = new Order();
+        order.setIncorrectIngredientsList();
         boolean isCreated = orderClient.createOrder(order, "")
                 .then()
                 .log()
