@@ -7,10 +7,19 @@ public class OrderClient extends RestAssuredClient {
 
     private final String ORDERS = "/orders";
 
-    public Response getOrders() {
-        return reqSpec
-                .when()
-                .get(ORDERS);
+    public Response getOrders(String token) {
+        if (token.length() > 0) {
+            return reqSpec
+                    .auth()
+                    .oauth2(token)
+                    .when()
+                    .get(ORDERS);
+        }
+        else {
+            return reqSpec
+                    .when()
+                    .get(ORDERS);
+        }
     }
 
     public Response createOrder(Order order, String token) {

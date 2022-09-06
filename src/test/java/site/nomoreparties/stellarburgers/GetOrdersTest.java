@@ -48,7 +48,7 @@ public class GetOrdersTest {
         orderClient.createOrder(order, "");
         System.out.println("The order for the test has been created");
 
-        boolean isOrdersReceived = orderClient.getOrders()
+        boolean isOrdersReceived = orderClient.getOrders(bearerToken)
                 .then()
                 .log()
                 .all()
@@ -67,7 +67,7 @@ public class GetOrdersTest {
     @DisplayName("Check status code of /orders/all: the user is not logged in, the list of orders has not been received")
     @Description("A test for a negative scenario, the system responds with a 401 code and an error message")
     public void getOrdersWithoutAuthTest(){
-        boolean isOrdersReceived = orderClient.getOrders()
+        boolean isOrdersReceived = orderClient.getOrders("")
                 .then()
                 .log()
                 .all()
