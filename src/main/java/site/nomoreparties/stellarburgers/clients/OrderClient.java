@@ -5,13 +5,13 @@ import site.nomoreparties.stellarburgers.models.Order;
 
 public class OrderClient extends RestAssuredClient {
 
-    private final String INGREDIENTS = "/ingredients";
     private final String ORDERS = "/orders";
+    private final String GETORDERS = ORDERS + "/all";
 
-    public Response getIngredients() {
+    public Response getOrders() {
         return reqSpec
                 .when()
-                .get(INGREDIENTS);
+                .get(GETORDERS);
     }
 
     public Response createOrder(Order order, String token) {
