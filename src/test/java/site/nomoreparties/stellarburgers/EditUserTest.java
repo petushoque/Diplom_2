@@ -28,7 +28,7 @@ public class EditUserTest {
     }
 
     @After
-    public void deleteCourier() {
+    public void deleteUser() {
         userClient.deleteUser();
         System.out.println("The created user was deleted after the test");
     }

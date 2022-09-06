@@ -24,7 +24,7 @@ public class RegisterUserTest {
     }
 
     @After
-    public void deleteCourier(){
+    public void deleteUser(){
         if((user.getName() != "")&(user.getPassword() != "")&(user.getEmail() != "")) {
             userClient.deleteUser();
             System.out.println("The created user was deleted after the test");
