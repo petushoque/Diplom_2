@@ -62,4 +62,22 @@ public class GetOrdersTest {
         userClient.deleteUser();
         System.out.println("The created user was deleted after the test");
     }
+
+    @Test
+    @DisplayName("Check status code of /orders/all: the user is not logged in, the list of orders has not been received")
+    @Description("A test for a negative scenario, the system responds with a 401 code and an error message")
+    public void getOrdersWithoutAuthTest(){
+        boolean isOrdersReceived = orderClient.getOrders()
+                .then()
+                .log()
+                .all()
+                .assertThat()
+                .statusCode(SC_UNAUTHORIZED)
+                .assertThat()
+                .body("message", equalTo("You should be authorised"))
+                .extract()
+                .path("success");
+        Assert.assertFalse(isOrdersReceived);
+        System.out.println("The list of orders has not been received");
+    }
 }

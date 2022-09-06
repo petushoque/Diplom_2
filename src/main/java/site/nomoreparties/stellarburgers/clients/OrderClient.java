@@ -6,12 +6,11 @@ import site.nomoreparties.stellarburgers.models.Order;
 public class OrderClient extends RestAssuredClient {
 
     private final String ORDERS = "/orders";
-    private final String GETORDERS = ORDERS + "/all";
 
     public Response getOrders() {
         return reqSpec
                 .when()
-                .get(GETORDERS);
+                .get(ORDERS);
     }
 
     public Response createOrder(Order order, String token) {
