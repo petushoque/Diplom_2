@@ -8,7 +8,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import site.nomoreparties.stellarburgers.clients.OrderClient;
-import site.nomoreparties.stellarburgers.clients.RestAssuredClient;
 import site.nomoreparties.stellarburgers.clients.UserClient;
 import site.nomoreparties.stellarburgers.models.Order;
 import site.nomoreparties.stellarburgers.models.User;
@@ -25,25 +24,35 @@ public class CreateOrderTest {
 
     @Before
     public void setUp() {
-    //    user = new User();
-    //    user.setRandom();
-    //    userClient = new UserClient();
-    //    userClient.createUser(user);
         orderClient = new OrderClient();
-    //    System.out.println("The user for the test is registered");
+        userClient = new UserClient();
+    }
+
+    @After
+    public void deleteUser() {
+        userClient.deleteUser();
+        System.out.println("The created user was deleted after the test");
     }
 
     @Test
-    @DisplayName("///")
-    @Description("///")
+    @DisplayName("Check status code and body of /orders: the user is logged in, the order is created")
+    @Description("A test for a positive scenario, a successful server response is 200, the response body contains success: true")
     public void createOrderWithAuthAndCorrectIngredientsTest(){
+        user = new User();
+        user.setRandom();
+        userClient.createUser(user);
+        System.out.println("The user for the test is registered");
+
         String bearerToken = userClient.loginUser(user)
                 .then()
                 .extract()
                 .path("accessToken");
         bearerToken = bearerToken.split(" ")[1];
+        System.out.println("The user for the test is logged in");
+
         Order order = new Order();
         order.setCorrectIngredientsList();
+
         boolean isCreated = orderClient.createOrder(order, bearerToken)
                 .then()
                 .log()
@@ -53,7 +62,7 @@ public class CreateOrderTest {
                 .extract()
                 .path("success");
         Assert.assertTrue(isCreated);
-        System.out.println("///");
+        System.out.println("A new order has been successfully created");
     }
 
     @Test

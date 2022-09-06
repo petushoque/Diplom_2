@@ -2,7 +2,6 @@ package site.nomoreparties.stellarburgers.clients;
 
 import io.restassured.response.Response;
 import site.nomoreparties.stellarburgers.models.Order;
-import site.nomoreparties.stellarburgers.models.User;
 
 public class OrderClient extends RestAssuredClient {
 
