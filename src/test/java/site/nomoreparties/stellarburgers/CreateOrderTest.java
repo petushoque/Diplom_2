@@ -3,7 +3,6 @@ package site.nomoreparties.stellarburgers;
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import lombok.Data;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,8 +10,8 @@ import site.nomoreparties.stellarburgers.clients.OrderClient;
 import site.nomoreparties.stellarburgers.clients.UserClient;
 import site.nomoreparties.stellarburgers.models.Order;
 import site.nomoreparties.stellarburgers.models.User;
-import static org.hamcrest.CoreMatchers.*;
 import static org.apache.http.HttpStatus.*;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 @Data
 public class CreateOrderTest {
@@ -28,14 +27,8 @@ public class CreateOrderTest {
         userClient = new UserClient();
     }
 
-    @After
-    public void deleteUser() {
-        userClient.deleteUser();
-        System.out.println("The created user was deleted after the test");
-    }
-
     @Test
-    @DisplayName("Check status code and body of /orders: the user is logged in, the order is created")
+    @DisplayName("Check status code and body of /orders: the user is logged in, the list of ingredients is correct, the order is created")
     @Description("A test for a positive scenario, a successful server response is 200, the response body contains success: true")
     public void createOrderWithAuthAndCorrectIngredientsTest(){
         user = new User();
@@ -63,14 +56,18 @@ public class CreateOrderTest {
                 .path("success");
         Assert.assertTrue(isCreated);
         System.out.println("A new order has been successfully created");
+
+        userClient.deleteUser();
+        System.out.println("The created user was deleted after the test");
     }
 
     @Test
-    @DisplayName("///")
-    @Description("///")
+    @DisplayName("Check status code and body of /orders: the user is not logged in, the list of ingredients is correct, the order is created")
+    @Description("A test for a positive scenario, a successful server response is 200, the response body contains success: true")
     public void createOrderWithoutAuthAndCorrectIngredientsTest(){
         Order order = new Order();
         order.setCorrectIngredientsList();
+
         boolean isCreated = orderClient.createOrder(order, "")
                 .then()
                 .log()
@@ -80,12 +77,12 @@ public class CreateOrderTest {
                 .extract()
                 .path("success");
         Assert.assertTrue(isCreated);
-        System.out.println("///");
+        System.out.println("A new order has been successfully created");
     }
 
     @Test
-    @DisplayName("///")
-    @Description("///")
+    @DisplayName("Check status code and body of /orders: the user is not logged in, the list of ingredients is empty, the order is not created")
+    @Description("A test for a negative scenario, for a request with an empty ingredients list, the system responds with a 400 code and an error message")
     public void createOrderWithoutAuthAndEmptyIngredientsListTest(){
         Order order = new Order();
         order.setEmptyIngredientsList();
@@ -94,28 +91,27 @@ public class CreateOrderTest {
                 .log()
                 .all()
                 .assertThat()
-                .statusCode(SC_OK)
+                .statusCode(SC_BAD_REQUEST)
+                .assertThat()
+                .body("message", equalTo("Ingredient ids must be provided"))
                 .extract()
                 .path("success");
-        Assert.assertTrue(isCreated);
-        System.out.println("///");
+        Assert.assertFalse(isCreated);
+        System.out.println("The system gave an error, the order was not created");
     }
 
     @Test
-    @DisplayName("///")
-    @Description("///")
+    @DisplayName("Check status code of /orders: the user is not logged in, the list of ingredients is incorrect, the order is not created")
+    @Description("A test for a negative scenario, for a request with an incorrect ingredients list, the system responds with a 500 code")
     public void createOrderWithoutAuthAndIncorrectIngredientsListTest(){
         Order order = new Order();
         order.setIncorrectIngredientsList();
-        boolean isCreated = orderClient.createOrder(order, "")
+        orderClient.createOrder(order, "")
                 .then()
                 .log()
                 .all()
                 .assertThat()
-                .statusCode(SC_OK)
-                .extract()
-                .path("success");
-        Assert.assertTrue(isCreated);
-        System.out.println("///");
+                .statusCode(SC_INTERNAL_SERVER_ERROR);
+        System.out.println("The system gave an error, the order was not created");
     }
 }
