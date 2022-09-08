@@ -1,5 +1,6 @@
 package site.nomoreparties.stellarburgers.clients;
 
+import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import site.nomoreparties.stellarburgers.models.Order;
 
@@ -7,6 +8,7 @@ public class OrderClient extends RestAssuredClient {
 
     private final String ORDERS = "/orders";
 
+    @Step("Get orders")
     public Response getOrders(String token) {
         if (token.length() > 0) {
             return reqSpec
@@ -22,6 +24,7 @@ public class OrderClient extends RestAssuredClient {
         }
     }
 
+    @Step("Create order")
     public Response createOrder(Order order, String token) {
         if (token.length() > 0) {
             return reqSpec

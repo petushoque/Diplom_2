@@ -1,5 +1,6 @@
 package site.nomoreparties.stellarburgers.clients;
 
+import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import site.nomoreparties.stellarburgers.models.User;
 
@@ -11,7 +12,7 @@ public class UserClient extends RestAssuredClient {
     private final String USER_URL = AUTH + "/user";
     private final String LOGOUT_USER_URL = AUTH + "/logout";
 
-
+    @Step("Create user")
     public Response createUser(User user) {
         return reqSpec
                 .body(user)
@@ -19,6 +20,7 @@ public class UserClient extends RestAssuredClient {
                 .post(CREATE_USER_URL);
     }
 
+    @Step("Login user")
     public Response loginUser(User user) {
         return reqSpec
                 .body(user)
@@ -26,6 +28,7 @@ public class UserClient extends RestAssuredClient {
                 .post(LOGIN_USER_URL);
     }
 
+    @Step("Edit user")
     public Response editUser(User user, String token) {
         if (token.length() > 0) {
             return reqSpec
@@ -44,6 +47,7 @@ public class UserClient extends RestAssuredClient {
 
     }
 
+    @Step("Delete user")
     public Response deleteUser(){
         return reqSpec
                 .when()
