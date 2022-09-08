@@ -3,6 +3,7 @@ package site.nomoreparties.stellarburgers;
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import lombok.Data;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +26,12 @@ public class CreateOrderTest {
     public void setUp() {
         orderClient = new OrderClient();
         userClient = new UserClient();
+    }
+
+    @After
+    public void deleteUser() {
+        userClient.deleteUser();
+        System.out.println("The created user was deleted after the test");
     }
 
     @Test
@@ -56,9 +63,6 @@ public class CreateOrderTest {
                 .path("success");
         Assert.assertTrue(isCreated);
         System.out.println("A new order has been successfully created");
-
-        userClient.deleteUser();
-        System.out.println("The created user was deleted after the test");
     }
 
     @Test
